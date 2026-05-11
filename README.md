@@ -6,7 +6,7 @@ Homebrew tap for CodeEntire.
 
 ```bash
 brew tap codeentire/tap
-brew install codeentire
+brew install entire
 ```
 
 This single command installs **4 binaries** in one shot:
@@ -25,7 +25,7 @@ curl -fsSL https://git.tencent.com/CodeEntire/install.sh | bash
 ```
 
 > ⚠️ The upstream archives are hosted on `git.tencent.com`. You must be on a
-> network that can reach the corp intranet for `brew install codeentire` to
+> network that can reach the corp intranet for `brew install entire` to
 > succeed. Out-of-network users should keep using the curl-pipe-bash flow.
 
 ## Quick start
@@ -44,13 +44,13 @@ Formula).
 
 ```bash
 brew update
-brew upgrade codeentire
+brew upgrade entire
 ```
 
 ## Uninstall
 
 ```bash
-brew uninstall codeentire
+brew uninstall entire
 brew untap codeentire/tap
 ```
 
@@ -67,24 +67,24 @@ brew untap codeentire/tap
 
    - download all 8 archives (4 platforms × CLI + plugin) and compute their
      sha256
-   - rewrite the 8 `sha256 "..."` lines in `Formula/codeentire.rb`
+   - rewrite the 8 `sha256 "..."` lines in `Formula/entire.rb`
    - bump the `version` field
 
 3. Review and commit:
 
    ```bash
-   git diff Formula/codeentire.rb
-   git add Formula/codeentire.rb
-   git commit -m "codeentire 1.0.1"
+   git diff Formula/entire.rb
+   git add Formula/entire.rb
+   git commit -m "entire 1.0.1"
    git push
    ```
 
 4. (Optional) Local sanity check before pushing:
 
    ```bash
-   brew install --build-from-source ./Formula/codeentire.rb
-   brew test codeentire
-   brew audit --strict --new-formula codeentire
+   brew install --build-from-source ./Formula/entire.rb
+   brew test entire
+   brew audit --strict --new-formula entire
    ```
 
 ## Layout
@@ -92,7 +92,7 @@ brew untap codeentire/tap
 ```
 homebrew-tap/
 ├── Formula/
-│   └── codeentire.rb       # the one-shot Formula
+│   └── entire.rb       # the one-shot Formula
 ├── scripts/
 │   └── bump.sh             # refresh sha256 + bump version
 ├── .gitignore

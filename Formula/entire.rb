@@ -10,7 +10,7 @@
 #
 # NOTE: the upstream URLs live on git.tencent.com, so this Formula only
 # works from a network that can reach the corp intranet.
-class Codeentire < Formula
+class Entire < Formula
   desc     "CodeEntire CLI + CodeBuddy plugin agents (4 binaries, one shot)"
   homepage "https://git.tencent.com/CodeEntire/Entire"
   version  "1.0.0" # bump on every release; refresh sha256 fields below

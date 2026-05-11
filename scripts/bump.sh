@@ -1,5 +1,5 @@
 #!/bin/bash
-# bump.sh -- refresh sha256 fields and bump version in Formula/codeentire.rb
+# bump.sh -- refresh sha256 fields and bump version in Formula/entire.rb
 #
 # Usage: ./scripts/bump.sh <new-version>
 # Example: ./scripts/bump.sh 1.0.1
@@ -8,7 +8,7 @@
 # It will:
 #   1. Compute sha256 for the 8 archives (4 platforms x 2 packages)
 #   2. Replace the sha256 line that immediately follows each matching url
-#      line in Formula/codeentire.rb (works on a fresh template AND on a
+#      line in Formula/entire.rb (works on a fresh template AND on a
 #      formula that already has real sha256s from a previous release)
 #   3. Bump the `version` field
 #   4. Print a hint for review
@@ -22,7 +22,7 @@ NEW_VER="${1:?usage: $0 <new-version>}"
 CLI_BASE="https://git.tencent.com/CodeEntire/Entire"
 PLUGIN_BASE="https://git.tencent.com/CodeEntire/CodeBuddyPlugin"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-F="${ROOT}/Formula/codeentire.rb"
+F="${ROOT}/Formula/entire.rb"
 
 [[ -f "$F" ]] || { echo "error: $F not found" >&2; exit 1; }
 
@@ -61,4 +61,4 @@ sed -i.bak -E "s|^(  version  +)\"[^\"]+\"|\1\"${NEW_VER}\"|" "$F"
 rm -f "${F}.bak"
 
 echo "==> Done. version=${NEW_VER}. Review:"
-echo "    git -C ${ROOT} diff -- Formula/codeentire.rb"
+echo "    git -C ${ROOT} diff -- Formula/entire.rb"
