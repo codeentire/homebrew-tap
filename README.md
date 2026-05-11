@@ -54,39 +54,6 @@ brew uninstall entire
 brew untap codeentire/tap
 ```
 
-## Maintainers — releasing a new version
-
-1. Make sure you're on a machine that can reach `git.tencent.com`.
-2. Run the bump helper with the new version number:
-
-   ```bash
-   ./scripts/bump.sh 1.0.1
-   ```
-
-   It will:
-
-   - download all 8 archives (4 platforms × CLI + plugin) and compute their
-     sha256
-   - rewrite the 8 `sha256 "..."` lines in `Formula/entire.rb`
-   - bump the `version` field
-
-3. Review and commit:
-
-   ```bash
-   git diff Formula/entire.rb
-   git add Formula/entire.rb
-   git commit -m "entire 1.0.1"
-   git push
-   ```
-
-4. (Optional) Local sanity check before pushing:
-
-   ```bash
-   brew install --build-from-source ./Formula/entire.rb
-   brew test entire
-   brew audit --strict --new-formula entire
-   ```
-
 ## Layout
 
 ```
