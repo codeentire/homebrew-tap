@@ -85,13 +85,46 @@ class Entire < Formula
     end
   end
 
+  # The `entire` CLI hard-codes "$HOME/.local/bin" as the canonical install
+  # location for its companion binaries. To stay compatible with that
+  # assumption (without forking the CLI), we mirror all 4 binaries from
+  # Homebrew's bin/ into ~/.local/bin via symlinks after install.
+  #
+  # Behaviour:
+  #   - mkpath ensures ~/.local/bin exists
+  #   - any existing entry at the target path (symlink, regular file, or
+  #     directory) is removed first, then re-created as a symlink.
+  #     This is intentional: we always overwrite, including manually
+  #     installed older versions.
+  def post_install
+    user_bin = Pathname.new(Dir.home)/".local/bin"
+    user_bin.mkpath
+
+    %w[
+      entire
+      code-entire
+      entire-agent-codebuddy-ide
+      entire-agent-codebuddy-plugin-internal
+    ].each do |b|
+      target = user_bin/b
+      # rm_rf handles all cases: dangling symlink, real file, or directory
+      target.rmtree if target.directory? && !target.symlink?
+      target.unlink if target.symlink? || target.exist?
+      target.make_symlink(bin/b)
+    end
+  end
+
   def caveats
     <<~EOS
-      Installed 4 binaries:
+      Installed 4 binaries (Homebrew bin + ~/.local/bin symlinks):
         - entire
         - code-entire
         - entire-agent-codebuddy-ide
         - entire-agent-codebuddy-plugin-internal
+
+      Symlinks were created in ~/.local/bin to stay compatible with the
+      `entire` CLI, which expects its binaries under that path. Any pre-
+      existing files at those paths were overwritten.
 
       Quick start:
         cd your-project
@@ -99,6 +132,11 @@ class Entire < Formula
         entire status
 
       Shell completions for `entire` are wired up automatically by Homebrew.
+
+      Uninstall note:
+        `brew uninstall entire` does NOT remove the ~/.local/bin symlinks.
+        Clean them up manually if needed:
+          rm -f ~/.local/bin/{entire,code-entire,entire-agent-codebuddy-ide,entire-agent-codebuddy-plugin-internal}
 
       Source archives are pulled from git.tencent.com (intranet only).
     EOS
@@ -110,5 +148,17 @@ class Entire < Formula
     assert_predicate bin/"code-entire",                            :executable?
     assert_predicate bin/"entire-agent-codebuddy-ide",             :executable?
     assert_predicate bin/"entire-agent-codebuddy-plugin-internal", :executable?
+
+    # ~/.local/bin symlinks created by post_install
+    user_bin = Pathname.new(Dir.home)/".local/bin"
+    %w[
+      entire
+      code-entire
+      entire-agent-codebuddy-ide
+      entire-agent-codebuddy-plugin-internal
+    ].each do |b|
+      assert_predicate user_bin/b, :symlink?
+      assert_equal (bin/b).to_s, (user_bin/b).readlink.to_s
+    end
   end
 end
