@@ -85,52 +85,20 @@ class Entire < Formula
     end
   end
 
-  # The `entire` CLI hard-codes "$HOME/.local/bin" as the canonical install
-  # location for its companion binaries. Ideally we'd auto-create those
-  # symlinks here, BUT Homebrew 4.x+ runs `post_install` inside a strict
-  # macOS Sandbox that DENIES every write outside the Cellar -- including
-  # `$HOME`. There is no Formula-level escape hatch (see
-  # Library/Homebrew/formula_installer.rb#run_postinstall in Homebrew 5.x).
-  #
-  # We therefore expose the same logic as a one-liner in `caveats`, which
-  # the user can copy-paste once. `ln -sfn` is idempotent, so re-running
-  # it after upgrades is safe.
-
   def caveats
-    bins = %w[
-      entire
-      code-entire
-      entire-agent-codebuddy-ide
-      entire-agent-codebuddy-plugin-internal
-    ]
-    link_cmd = "mkdir -p ~/.local/bin && " +
-               bins.map { |b| "ln -sfn #{bin}/#{b} ~/.local/bin/#{b}" }.join(" && ")
-
     <<~EOS
-      Installed 4 binaries under #{bin}:
+      Installed 4 binaries:
         - entire
         - code-entire
         - entire-agent-codebuddy-ide
         - entire-agent-codebuddy-plugin-internal
 
-      ⚠️  ONE-TIME SETUP REQUIRED  ⚠️
-      The `entire` CLI expects its companion binaries under ~/.local/bin.
-      Homebrew's sandbox forbids us from writing there during install,
-      so please run this one-liner once (safe to re-run):
-
-        #{link_cmd}
-
-      Quick start (after running the one-liner above):
+      Quick start:
         cd your-project
         entire enable
         entire status
 
       Shell completions for `entire` are wired up automatically by Homebrew.
-
-      Uninstall note:
-        `brew uninstall entire` does NOT remove the ~/.local/bin symlinks.
-        Clean them up manually if needed:
-          rm -f ~/.local/bin/{#{bins.join(",")}}
 
       Source archives are pulled from git.tencent.com (intranet only).
     EOS
