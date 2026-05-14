@@ -86,47 +86,41 @@ class Entire < Formula
   end
 
   # The `entire` CLI hard-codes "$HOME/.local/bin" as the canonical install
-  # location for its companion binaries. To stay compatible with that
-  # assumption (without forking the CLI), we mirror all 4 binaries from
-  # Homebrew's bin/ into ~/.local/bin via symlinks after install.
+  # location for its companion binaries. Ideally we'd auto-create those
+  # symlinks here, BUT Homebrew 4.x+ runs `post_install` inside a strict
+  # macOS Sandbox that DENIES every write outside the Cellar -- including
+  # `$HOME`. There is no Formula-level escape hatch (see
+  # Library/Homebrew/formula_installer.rb#run_postinstall in Homebrew 5.x).
   #
-  # Behaviour:
-  #   - mkpath ensures ~/.local/bin exists
-  #   - any existing entry at the target path (symlink, regular file, or
-  #     directory) is removed first, then re-created as a symlink.
-  #     This is intentional: we always overwrite, including manually
-  #     installed older versions.
-  def post_install
-    user_bin = Pathname.new(Dir.home)/".local/bin"
-    user_bin.mkpath
+  # We therefore expose the same logic as a one-liner in `caveats`, which
+  # the user can copy-paste once. `ln -sfn` is idempotent, so re-running
+  # it after upgrades is safe.
 
-    %w[
+  def caveats
+    bins = %w[
       entire
       code-entire
       entire-agent-codebuddy-ide
       entire-agent-codebuddy-plugin-internal
-    ].each do |b|
-      target = user_bin/b
-      # rm_rf handles all cases: dangling symlink, real file, or directory
-      target.rmtree if target.directory? && !target.symlink?
-      target.unlink if target.symlink? || target.exist?
-      target.make_symlink(bin/b)
-    end
-  end
+    ]
+    link_cmd = "mkdir -p ~/.local/bin && " +
+               bins.map { |b| "ln -sfn #{bin}/#{b} ~/.local/bin/#{b}" }.join(" && ")
 
-  def caveats
     <<~EOS
-      Installed 4 binaries (Homebrew bin + ~/.local/bin symlinks):
+      Installed 4 binaries under #{bin}:
         - entire
         - code-entire
         - entire-agent-codebuddy-ide
         - entire-agent-codebuddy-plugin-internal
 
-      Symlinks were created in ~/.local/bin to stay compatible with the
-      `entire` CLI, which expects its binaries under that path. Any pre-
-      existing files at those paths were overwritten.
+      ⚠️  ONE-TIME SETUP REQUIRED  ⚠️
+      The `entire` CLI expects its companion binaries under ~/.local/bin.
+      Homebrew's sandbox forbids us from writing there during install,
+      so please run this one-liner once (safe to re-run):
 
-      Quick start:
+        #{link_cmd}
+
+      Quick start (after running the one-liner above):
         cd your-project
         entire enable
         entire status
@@ -136,7 +130,7 @@ class Entire < Formula
       Uninstall note:
         `brew uninstall entire` does NOT remove the ~/.local/bin symlinks.
         Clean them up manually if needed:
-          rm -f ~/.local/bin/{entire,code-entire,entire-agent-codebuddy-ide,entire-agent-codebuddy-plugin-internal}
+          rm -f ~/.local/bin/{#{bins.join(",")}}
 
       Source archives are pulled from git.tencent.com (intranet only).
     EOS
@@ -148,17 +142,5 @@ class Entire < Formula
     assert_predicate bin/"code-entire",                            :executable?
     assert_predicate bin/"entire-agent-codebuddy-ide",             :executable?
     assert_predicate bin/"entire-agent-codebuddy-plugin-internal", :executable?
-
-    # ~/.local/bin symlinks created by post_install
-    user_bin = Pathname.new(Dir.home)/".local/bin"
-    %w[
-      entire
-      code-entire
-      entire-agent-codebuddy-ide
-      entire-agent-codebuddy-plugin-internal
-    ].each do |b|
-      assert_predicate user_bin/b, :symlink?
-      assert_equal (bin/b).to_s, (user_bin/b).readlink.to_s
-    end
   end
 end
