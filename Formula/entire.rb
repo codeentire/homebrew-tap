@@ -13,7 +13,7 @@
 class Entire < Formula
   desc     "CodeEntire CLI + CodeBuddy plugin agents (4 binaries, one shot)"
   homepage "https://git.tencent.com/CodeEntire/Entire"
-  version  "v0.7.8-nightly.202606230724.e3fc6f88c-f7f0c2b68" # bump on every release; refresh sha256 fields below
+  version  "v0.7.8-codeentire.1-40ca9d360" # bump on every release; refresh sha256 fields below
   license  "MIT"
 
   livecheck do
@@ -24,19 +24,19 @@ class Entire < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_darwin_arm64.tar.gz"
-      sha256 "8c6010c800f5b315f8bf1d6617cff426123b62bec81e1c12a3bf32d1843e450c"
+      sha256 "3030227e2d0b5682ca9797020a58df5ad896438d50bf0788f7288e5795ab80bc"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_darwin_arm64.tar.gz"
-        sha256 "5a7c811332a9d6c7403e612744dbbc3c7cd449f6d20a2e81e8958ee5c07f3bc5"
+        sha256 "c93b0083c316b5af892cbbe1a85cab1609867238be0efe53581876b391b4f8d7"
       end
     else
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_darwin_amd64.tar.gz"
-      sha256 "8b077f79d61515b9b9a726ec82e4fea3f9769cdd6c5469f4f5f4abe5c326d453"
+      sha256 "110f8cd1032ead6a350764a84f9f6d609a454e525e5648a20d01be8565a14f32"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_darwin_amd64.tar.gz"
-        sha256 "9621365357b455e1120f38490e037bb7875dc7083c21d82e22e9efcdaed2d1e5"
+        sha256 "51c66e1cbde1f1948b9b267d803384e4e81eb80485a88a6f64fc94b87806bf38"
       end
     end
   end
@@ -44,19 +44,19 @@ class Entire < Formula
   on_linux do
     if Hardware::CPU.arm?
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_linux_arm64.tar.gz"
-      sha256 "19d6a17c303fa470fc5a766211079718531def63acf7496bd2a96ece0fed7614"
+      sha256 "85e164a6ed8ff82570d861300328dce75e75c3e79742529b3d17c337e56673b0"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_linux_arm64.tar.gz"
-        sha256 "f09c05a72c86e2e7ee1a170d36528acac32e02a4fe99c284e8a63b005671fed4"
+        sha256 "f535294f4a2f3d8d172b4c3502ac15525f5187b1c57c22d80b585edfa1abe585"
       end
     else
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_linux_amd64.tar.gz"
-      sha256 "519427996bf32d341f7073af73e65a562b30f11e2bc02504ac796fc615a2ae5d"
+      sha256 "f6933bd0b22b5ac5c5087fb20c250899c4db69f21cbf9aa6e4d928e7188147c1"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_linux_amd64.tar.gz"
-        sha256 "5a7c1225499a20d226f4e0cd3504816ae27b68965e575eedfeb78d6d4e25b370"
+        sha256 "a4812ca22d0635d61032279818fd4798708d2f560b828a9feadb9a06afe4ff3c"
       end
     end
   end
