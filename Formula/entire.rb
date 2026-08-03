@@ -4,16 +4,16 @@
 # Mirrors scripts/install-all-cos.sh end-to-end:
 #   - downloads code-entire_${os}_${arch}.tar.gz   (CLI: entire + code-entire)
 #   - downloads codebuddy-plugin_${os}_${arch}.tar.gz
-#       (agents: entire-agent-codebuddy-ide + entire-agent-codebuddy-plugin-internal)
+#       (agents: entire-agent-codebuddy-ide + entire-agent-codebuddy-plugin-internal + entire-agent-with)
 #   - verifies sha256 (Homebrew enforces the field below)
-#   - installs all 4 binaries + shell completions for `entire`
+#   - installs all 5 binaries + shell completions for `entire`
 #
 # NOTE: the upstream URLs live on git.tencent.com, so this Formula only
 # works from a network that can reach the corp intranet.
 class Entire < Formula
-  desc     "CodeEntire CLI + CodeBuddy plugin agents (4 binaries, one shot)"
+  desc     "CodeEntire CLI + CodeBuddy plugin agents (5 binaries, one shot)"
   homepage "https://git.tencent.com/CodeEntire/Entire"
-  version  "v0.8.42-codeentire.1-a5bbc96cc" # bump on every release; refresh sha256 fields below
+  version  "1.0.0" # bump on every release; refresh sha256 fields below
   license  "MIT"
 
   livecheck do
@@ -24,19 +24,19 @@ class Entire < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_darwin_arm64.tar.gz"
-      sha256 "eab56538fff4eb48198516a505277d2f48d1f40869357926320c38d961b931b9"
+      sha256 "bdc1bd5dd9e433dc60088e99d845ccf094058cee5ccb0363995a85e2b74488b5"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_darwin_arm64.tar.gz"
-        sha256 "35438313c16f65b2406f7cb06ba51c43fa54e2328181da0e4fe9a1cae119f41b"
+        sha256 "807b7b198cedb5664650f464896ccf506570e7cbad33a0fd9713df02c36832d4"
       end
     else
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_darwin_amd64.tar.gz"
-      sha256 "9cc579577251ec66e18b14f01d0d67940773a77e6511b587b9a9463cff729213"
+      sha256 "257ed9912baa30e000ab1c63cabfb672e4741f62fcd0262000bc3c0a72a81870"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_darwin_amd64.tar.gz"
-        sha256 "61b695e21749a011c319d5075cecbc86940f92c953b466e4f4831833e4bc5e94"
+        sha256 "eaae276640106715ba8cb9645b1aacae2ff0751191b1f69ba52f12fb70bed0e7"
       end
     end
   end
@@ -44,19 +44,19 @@ class Entire < Formula
   on_linux do
     if Hardware::CPU.arm?
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_linux_arm64.tar.gz"
-      sha256 "dc1ee0ac8ac1eb2d14eb9f98d42f21146eb84a3c6d092f333d606d2044083f52"
+      sha256 "311dd471901dd82eb8fd22cf85a9f8de6fdca9066d877370156bd6df59b36159"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_linux_arm64.tar.gz"
-        sha256 "0e4c2fcf273ec37de733e924c476bdcf5afa0e172c8554ebec312c356d334be4"
+        sha256 "d65abe44ae4fad990b166b817401bfaddbdf6485b9f22bc70239c1bfc2e7b5dd"
       end
     else
       url "https://git.tencent.com/CodeEntire/Entire/code-entire_linux_amd64.tar.gz"
-      sha256 "f47b9ad91b512e7bdbd3850f1628a719c2732bd11f58cc72894264f90420d2ca"
+      sha256 "756822a08c50b05338afdfb466ef85518c52239a8d7b2abe1606417cc6b77b1a"
 
       resource "codebuddy-plugin" do
         url "https://git.tencent.com/CodeEntire/CodeBuddyPlugin/codebuddy-plugin_linux_amd64.tar.gz"
-        sha256 "55dd04fcfa3093126da846764fd2f54766f666a5065fdcf8905799554578de43"
+        sha256 "fd9292cc95bf8d18f7705201db352719f4b2f97285537d6627a0f28cc2e697ba"
       end
     end
   end
@@ -82,16 +82,18 @@ class Entire < Formula
     resource("codebuddy-plugin").stage do
       bin.install "entire-agent-codebuddy-ide"
       bin.install "entire-agent-codebuddy-plugin-internal"
+      bin.install "entire-agent-with"
     end
   end
 
   def caveats
     <<~EOS
-      Installed 4 binaries:
+      Installed 5 binaries:
         - entire
         - code-entire
         - entire-agent-codebuddy-ide
         - entire-agent-codebuddy-plugin-internal
+        - entire-agent-with
 
       Quick start:
         cd your-project
@@ -110,5 +112,6 @@ class Entire < Formula
     assert_predicate bin/"code-entire",                            :executable?
     assert_predicate bin/"entire-agent-codebuddy-ide",             :executable?
     assert_predicate bin/"entire-agent-codebuddy-plugin-internal", :executable?
+    assert_predicate bin/"entire-agent-with",                      :executable?
   end
 end
